@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VIZA To-Do App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      color: #333;
+    }
+
+    .left-panel, .right-panel {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .left-panel {
+      background: #f6f0ff;
+      border-right: 1px solid #ddd;
+    }
+
+    .right-panel {
+      background: #ffffff;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: blueviolet;
+    }
+
+    input[type="text"] {
+      width: 70%;
+      padding: 0.5rem;
+      margin-right: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: blueviolet;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background: indigo;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 1rem;
+    }
+
+    li {
+      background: #eae1ff;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .remove-btn {
+      background: crimson;
+      border: none;
+      color: white;
+      border-radius: 3px;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      background: darkred;
+    }
+
+    .input-group {
+      margin-bottom: 1rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="left-panel">
+    <h2>Other Information</h2>
+    <div class="input-group">
+      <input type="text" id="noteInput" placeholder="Add note..." />
+      <button onclick="addNote()">Add</button>
+    </div>
+    <ul id="noteList"></ul>
+  </div>
+
+  <div class="right-panel">
+    <h2>VIZA To-Do List</h2>
+    <div class="input-group">
+      <input type="text" id="taskInput" placeholder="Add new VIZA task..." />
+      <button onclick="addTask()">Add</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    // ================= TASKS =================
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+
+    function loadTasks() {
+      const tasks = JSON.parse(localStorage.getItem('vizaTasks')) || [];
+      taskList.innerHTML = '';
+      tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.textContent = task;
+        const btn = document.createElement('button');
+        btn.textContent = 'Remove';
+        btn.className = 'remove-btn';
+        btn.onclick = () => removeTask(index);
+        li.appendChild(btn);
+        taskList.appendChild(li);
+      });
+    }
+
+    function addTask() {
+      const task = taskInput.value.trim();
+      if (!task) return;
+      const tasks = JSON.parse(localStorage.getItem('vizaTasks')) || [];
+      tasks.push(task);
+      localStorage.setItem('vizaTasks', JSON.stringify(tasks));
+      taskInput.value = '';
+      loadTasks();
+    }
+
+    function removeTask(index) {
+      const tasks = JSON.parse(localStorage.getItem('vizaTasks')) || [];
+      tasks.splice(index, 1);
+      localStorage.setItem('vizaTasks', JSON.stringify(tasks));
+      loadTasks();
+    }
+
+    // ================= NOTES =================
+    const noteInput = document.getElementById('noteInput');
+    const noteList = document.getElementById('noteList');
+
+    function loadNotes() {
+      const notes = JSON.parse(localStorage.getItem('vizaNotes')) || [];
+      noteList.innerHTML = '';
+      notes.forEach((note, index) => {
+        const li = document.createElement('li');
+        li.textContent = note;
+        const btn = document.createElement('button');
+        btn.textContent = 'Delete';
+        btn.className = 'remove-btn';
+        btn.onclick = () => removeNote(index);
+        li.appendChild(btn);
+        noteList.appendChild(li);
+      });
+    }
+
+    function addNote() {
+      const note = noteInput.value.trim();
+      if (!note) return;
+      const notes = JSON.parse(localStorage.getItem('vizaNotes')) || [];
+      notes.push(note);
+      localStorage.setItem('vizaNotes', JSON.stringify(notes));
+      noteInput.value = '';
+      loadNotes();
+    }
+
+    function removeNote(index) {
+      const notes = JSON.parse(localStorage.getItem('vizaNotes')) || [];
+      notes.splice(index, 1);
+      localStorage.setItem('vizaNotes', JSON.stringify(notes));
+      loadNotes();
+    }
+
+    window.onload = () => {
+      loadTasks();
+      loadNotes();
+    };
+  </script>
+
+</body>
+</html>
